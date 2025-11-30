@@ -15,7 +15,8 @@ import {
   Search,
   Users,
   CreditCard,
-  ShieldCheck
+  ShieldCheck,
+  MapPin        
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -40,6 +41,14 @@ const hrCards = [
   { title: 'HR Payslip Entry', icon: DollarSign, route: '/hr/payslips/entry', color: 'from-fuchsia-500/20 to-fuchsia-600/20' },
   { title: 'Change Shift', icon: Settings, route: '/hr/shifts', color: 'from-lime-500/20 to-lime-600/20' },
   { title: 'Expense Overview', icon: CreditCard, route: '/hr/expenses', color: 'from-sky-500/20 to-sky-600/20' },
+  { title: 'Attendance Regularisation', icon: Settings, route: '/hr/attendance-regularisation', color: 'from-teal-500/20 to-teal-600/20' },
+  {
+  title: 'Live Map',
+  icon: MapPin,
+  route: '/hr/live-map-ola',
+  color: 'from-sky-500/20 to-sky-600/20'
+},
+
 ];
 
 export default function Home() {
