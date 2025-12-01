@@ -51,7 +51,6 @@
     "lucide-react": "^0.462.0",
     "maplibre-gl": "^5.13.0",
     "next-themes": "^0.3.0",
-    "olamaps-web-sdk": "^1.1.4",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
@@ -63,6 +62,7 @@
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
+    "workbox-window": "^7.4.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {

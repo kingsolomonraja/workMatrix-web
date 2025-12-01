@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { useOlaMap } from "@/hooks/useOlaMap";
+import { useOpenStreetMap } from "@/hooks/useOpenStreetMap";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { MapPin } from "lucide-react";
@@ -12,7 +12,7 @@ export default function LiveMapOla() {
   const { profile } = useAuth();
   const isHr = profile?.role === "hr";
 
-  const { mapRef, addAvatarMarker, clearMarkers, map } = useOlaMap({
+  const { mapRef, addAvatarMarker, clearMarkers } = useOpenStreetMap({
     center: [77.5946, 12.9716],
     zoom: 11,
   });
@@ -31,7 +31,7 @@ export default function LiveMapOla() {
       snap.forEach((docSnap) => {
         const d = docSnap.data();
         if (d.lat && d.lng) {
-          addAvatarMarker(d.lat, d.lng, d.photoUrl || "/default-avatar.png", 54);
+          addAvatarMarker(d.lat, d.lng, d.photoUrl || "/placeholder.svg", 54);
         }
       });
     });
@@ -52,12 +52,12 @@ export default function LiveMapOla() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="p-4 border-b border-border flex items-center gap-3">
+      <header className="p-4 border-b border-border flex items-center gap-3 bg-background">
         <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
           ←
         </Button>
         <h1 className="text-lg font-semibold flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-blue-600" />
+          <MapPin className="w-5 h-5 text-primary" />
           Live Employee Map
         </h1>
       </header>
