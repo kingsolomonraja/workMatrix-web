@@ -12,13 +12,13 @@ export default function LiveMapOla() {
   const { profile } = useAuth();
   const isHr = profile?.role === "hr";
 
-  const { mapRef, addAvatarMarker, clearMarkers } = useOpenStreetMap({
+  const { mapRef, addAvatarMarker, clearMarkers, mapLoaded } = useOpenStreetMap({
     center: [77.5946, 12.9716],
     zoom: 11,
   });
 
   useEffect(() => {
-    if (!isHr) return;
+    if (!isHr || !mapLoaded) return;
 
     const q = query(
       collection(db, "liveLocations"),
@@ -37,7 +37,7 @@ export default function LiveMapOla() {
     });
 
     return () => unsub();
-  }, [isHr]);
+  }, [isHr, mapLoaded, clearMarkers, addAvatarMarker]);
 
   if (!isHr) {
     return (
@@ -62,7 +62,17 @@ export default function LiveMapOla() {
         </h1>
       </header>
 
-      <div ref={mapRef} className="w-full h-[calc(100vh-64px)]" />
+      <div className="relative w-full h-[calc(100vh-64px)]">
+        {!mapLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background z-10">
+            <div className="text-center">
+              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-sm text-muted-foreground">Loading map...</p>
+            </div>
+          </div>
+        )}
+        <div ref={mapRef} className="w-full h-full" />
+      </div>
     </div>
   );
 }

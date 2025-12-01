@@ -1,5 +1,5 @@
 // src/hooks/useOpenStreetMap.ts
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -14,6 +14,7 @@ export const useOpenStreetMap = (options?: UseOpenStreetMapOptions) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -33,6 +34,8 @@ export const useOpenStreetMap = (options?: UseOpenStreetMapOptions) => {
     map.addControl(new maplibregl.NavigationControl(), "top-right");
 
     map.on("load", () => {
+      setMapLoaded(true);
+
       // Try adding 3D buildings (if style supports OpenMapTiles)
       try {
         const style = map.getStyle();
@@ -75,31 +78,34 @@ export const useOpenStreetMap = (options?: UseOpenStreetMapOptions) => {
     });
 
     return () => {
+      setMapLoaded(false);
       map.remove();
     };
   }, [options?.center, options?.zoom, options?.pitch, options?.bearing]);
 
-  const clearMarkers = () => {
+  const clearMarkers = useCallback(() => {
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
-  };
+  }, []);
 
-  const addMarker = (lat: number, lng: number, element: HTMLElement) => {
-    if (!mapInstanceRef.current) return;
+  const addMarker = useCallback((lat: number, lng: number, element: HTMLElement) => {
+    if (!mapInstanceRef.current || !mapLoaded) return;
 
     const marker = new maplibregl.Marker({ element })
       .setLngLat([lng, lat])
       .addTo(mapInstanceRef.current);
 
     markersRef.current.push(marker);
-  };
+  }, [mapLoaded]);
 
-  const addAvatarMarker = (
+  const addAvatarMarker = useCallback((
     lat: number,
     lng: number,
     imageUrl: string,
     size = 48
   ) => {
+    if (!mapInstanceRef.current || !mapLoaded) return;
+
     const el = document.createElement("div");
     el.style.width = `${size}px`;
     el.style.height = `${size}px`;
@@ -120,7 +126,7 @@ export const useOpenStreetMap = (options?: UseOpenStreetMapOptions) => {
 
     el.appendChild(img);
     addMarker(lat, lng, el);
-  };
+  }, [mapLoaded, addMarker]);
 
   return {
     mapRef,
@@ -128,5 +134,6 @@ export const useOpenStreetMap = (options?: UseOpenStreetMapOptions) => {
     addMarker,
     addAvatarMarker,
     clearMarkers,
+    mapLoaded,
   };
 };
