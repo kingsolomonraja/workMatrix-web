@@ -12,10 +12,13 @@ export default function LiveMapOla() {
   const { profile } = useAuth();
   const isHr = profile?.role === "hr";
 
-  const { mapRef, addAvatarMarker, clearMarkers } = useOpenStreetMap({
-    center: [77.5946, 12.9716],
-    zoom: 11,
-  });
+  const { mapRef, addAvatarMarker, clearMarkers, fitToMarkers } =
+    useOpenStreetMap({
+      // Show South India / Karnataka by default
+      center: [77.65, 12.9], // near Bengaluru
+      zoom: 7,
+      restrictToIndia: true,
+    });
 
   useEffect(() => {
     if (!isHr) return;
@@ -31,13 +34,21 @@ export default function LiveMapOla() {
       snap.forEach((docSnap) => {
         const d = docSnap.data();
         if (d.lat && d.lng) {
-          addAvatarMarker(d.lat, d.lng, d.photoUrl || "/placeholder.svg", 54);
+          addAvatarMarker(
+            d.lat,
+            d.lng,
+            d.photoUrl || "/placeholder.svg",
+            54
+          );
         }
       });
+
+      // optional: auto-zoom to show all active employees
+      fitToMarkers();
     });
 
     return () => unsub();
-  }, [isHr]);
+  }, [isHr, clearMarkers, addAvatarMarker, fitToMarkers]);
 
   if (!isHr) {
     return (

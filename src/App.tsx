@@ -186,15 +186,6 @@ const App = () => (
   }
 />
 
-<Route
-  path="/hr/live-map-ola"
-  element={
-    <ProtectedRoute>
-      <LiveMapOla />
-    </ProtectedRoute>
-  }
-/>  
-
 
             </Routes>
             <PWAInstallPrompt />
