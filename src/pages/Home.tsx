@@ -1,4 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -12,47 +13,43 @@ import {
   Settings,
   LogOut,
   Menu,
-  Search,
   Users,
   CreditCard,
   ShieldCheck,
-  MapPin        
+  MapPin,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { useState } from 'react';
 
 const employeeCards = [
-  { title: 'Startup', icon: LayoutDashboard, route: '/startup', color: 'from-purple-500/20 to-purple-600/20' },
-  { title: 'Punch', icon: Clock, route: '/punch', color: 'from-orange-500/20 to-orange-600/20' },
-  { title: 'Apply Leave', icon: FileText, route: '/leave/apply', color: 'from-cyan-500/20 to-cyan-600/20' },
-  { title: 'Leave Balance', icon: ClipboardList, route: '/leave/balance', color: 'from-pink-500/20 to-pink-600/20' },
-  { title: 'Calendar', icon: Calendar, route: '/calendar', color: 'from-green-500/20 to-green-600/20' },
-  { title: 'Tickets', icon: Ticket, route: '/tickets', color: 'from-blue-500/20 to-blue-600/20' },
-  { title: 'Payslip', icon: DollarSign, route: '/payslips', color: 'from-yellow-500/20 to-yellow-600/20' },
-  { title: 'In Out Report', icon: FileText, route: '/attendance/in-out', color: 'from-red-500/20 to-red-600/20' },
-  { title: 'IT Declaration', icon: ShieldCheck, route: '/it-declaration', color: 'from-indigo-500/20 to-indigo-600/20' },
-  { title: 'Attendance Regularisation', icon: Settings, route: '/attendance/regularisation', color: 'from-teal-500/20 to-teal-600/20' },
-  { title: 'Daily Attendance', icon: Calendar, route: '/attendance/daily-report', color: 'from-violet-500/20 to-violet-600/20' },
-  { title: 'Expense Claim', icon: CreditCard, route: '/expenses/employee', color: 'from-rose-500/20 to-rose-600/20' },
+  { title: 'Startup', icon: LayoutDashboard, route: '/startup', iconColor: 'text-purple-600' },
+  { title: 'Punch', icon: Clock, route: '/punch', iconColor: 'text-orange-600' },
+  { title: 'Apply Leave', icon: FileText, route: '/leave/apply', iconColor: 'text-cyan-600' },
+  { title: 'Leave Balance', icon: ClipboardList, route: '/leave/balance', iconColor: 'text-pink-600' },
+  { title: 'Calendar', icon: Calendar, route: '/calendar', iconColor: 'text-green-600' },
+  { title: 'Tickets', icon: Ticket, route: '/tickets', iconColor: 'text-blue-600' },
+  { title: 'Payslip', icon: DollarSign, route: '/payslips', iconColor: 'text-yellow-600' },
+  { title: 'In Out Report', icon: FileText, route: '/attendance/in-out', iconColor: 'text-red-600' },
+  { title: 'IT Declaration', icon: ShieldCheck, route: '/it-declaration', iconColor: 'text-indigo-600' },
+  { title: 'Attendance Regularisation', icon: Settings, route: '/attendance/regularisation', iconColor: 'text-teal-600' },
+  { title: 'Daily Attendance', icon: Calendar, route: '/attendance/daily-report', iconColor: 'text-violet-600' },
+  { title: 'Expense Claim', icon: CreditCard, route: '/expenses/employee', iconColor: 'text-rose-600' },
 ];
 
 const hrCards = [
-  { title: 'HR Leave Approval', icon: ClipboardList, route: '/hr/leave-approvals', color: 'from-emerald-500/20 to-emerald-600/20' },
-  { title: 'HR Ticket Approval', icon: Ticket, route: '/hr/ticket-approvals', color: 'from-amber-500/20 to-amber-600/20' },
-  { title: 'HR Payslip Entry', icon: DollarSign, route: '/hr/payslips/entry', color: 'from-fuchsia-500/20 to-fuchsia-600/20' },
-  { title: 'Change Shift', icon: Settings, route: '/hr/shifts', color: 'from-lime-500/20 to-lime-600/20' },
-  { title: 'Expense Overview', icon: CreditCard, route: '/hr/expenses', color: 'from-sky-500/20 to-sky-600/20' },
-  { title: 'Attendance Regularisation', icon: Settings, route: '/hr/attendance-regularisation', color: 'from-teal-500/20 to-teal-600/20' },
-  {
-  title: 'Live Map',
-  icon: MapPin,
-  route: '/hr/live-map-ola',
-  color: 'from-sky-500/20 to-sky-600/20'
-},
-
+  { title: 'HR Leave Approval', icon: ClipboardList, route: '/hr/leave-approvals', iconColor: 'text-emerald-600' },
+  { title: 'HR Ticket Approval', icon: Ticket, route: '/hr/ticket-approvals', iconColor: 'text-amber-600' },
+  { title: 'HR Payslip Entry', icon: DollarSign, route: '/hr/payslips/entry', iconColor: 'text-fuchsia-600' },
+  { title: 'Change Shift', icon: Settings, route: '/hr/shifts', iconColor: 'text-lime-600' },
+  { title: 'Expense Overview', icon: CreditCard, route: '/hr/expenses', iconColor: 'text-sky-600' },
+  { title: 'Attendance Regularisation', icon: Settings, route: '/hr/attendance-regularisation', iconColor: 'text-teal-600' },
+  { title: 'Live Map', icon: MapPin, route: '/hr/live-map-ola', iconColor: 'text-sky-600' },
 ];
 
 export default function Home() {
   const { profile, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -78,8 +75,8 @@ export default function Home() {
             </Button>
             <h1 className="text-xl font-bold">Home</h1>
           </div>
-          <Button variant="ghost" size="icon">
-            <Search className="w-5 h-5" />
+          <Button variant="ghost" size="icon" onClick={toggleTheme}>
+            {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
           </Button>
         </div>
       </header>
@@ -140,13 +137,13 @@ export default function Home() {
             <button
               key={card.route}
               onClick={() => navigate(card.route)}
-              className={`bg-gradient-to-br ${card.color} border border-border rounded-2xl p-6 hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5`}
+              className="bg-card border border-border rounded-2xl p-6 hover:scale-105 transition-all duration-300 hover:shadow-lg active:scale-95"
             >
               <div className="flex flex-col items-center text-center gap-3">
-                <div className="w-12 h-12 bg-background/50 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                  <card.icon className="w-6 h-6 text-foreground" />
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center">
+                  <card.icon className={`w-7 h-7 ${card.iconColor}`} />
                 </div>
-                <span className="text-sm font-medium">{card.title}</span>
+                <span className="text-sm font-medium text-foreground">{card.title}</span>
               </div>
             </button>
           ))}

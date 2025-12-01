@@ -216,8 +216,8 @@ export default function CalendarView() {
       return {
         type: "holiday",
         label: day.holiday.name,
-        colorClass: "text-amber-800",
-        bgClass: "bg-amber-50",
+        colorClass: "text-amber-600",
+        bgClass: "bg-muted/50",
         Icon: Star,
       };
     }
@@ -227,8 +227,8 @@ export default function CalendarView() {
       return {
         type: "sunday",
         label: "Sunday",
-        colorClass: "text-slate-700",
-        bgClass: "bg-slate-50",
+        colorClass: "text-muted-foreground",
+        bgClass: "bg-muted/30",
         Icon: Sun,
       };
     }
@@ -242,8 +242,8 @@ export default function CalendarView() {
       return {
         type: "leave",
         label: day.leaves.map((l) => l.type).join(", "),
-        colorClass: "text-blue-800",
-        bgClass: "bg-blue-50",
+        colorClass: "text-blue-600",
+        bgClass: "bg-muted/50",
         Icon: isWfh ? Home : CalendarX,
       };
     }
@@ -253,8 +253,8 @@ export default function CalendarView() {
       return {
         type: "absent",
         label: "Absent",
-        colorClass: "text-rose-700",
-        bgClass: "bg-rose-50",
+        colorClass: "text-rose-600",
+        bgClass: "bg-muted/50",
         Icon: XCircle,
       };
     }
@@ -264,8 +264,8 @@ export default function CalendarView() {
       return {
         type: "half-day",
         label: "Half Day",
-        colorClass: "text-amber-700",
-        bgClass: "bg-amber-50",
+        colorClass: "text-amber-600",
+        bgClass: "bg-muted/50",
         Icon: Clock,
       };
     }
@@ -275,8 +275,8 @@ export default function CalendarView() {
       return {
         type: "present",
         label: "Present",
-        colorClass: "text-emerald-700",
-        bgClass: "bg-emerald-50",
+        colorClass: "text-emerald-600",
+        bgClass: "bg-muted/50",
         Icon: CheckCircle,
       };
     }
@@ -381,14 +381,11 @@ export default function CalendarView() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <StatCard title="Days" value={stats.totalDays} />
           <StatCard title="Present" value={stats.present} colorClass="text-emerald-600" />
           <StatCard title="Absent" value={stats.absent} colorClass="text-rose-600" />
           <StatCard title="Leave" value={stats.leaveDays} colorClass="text-blue-600" />
-          <Button variant="outline" size="icon" onClick={fetchAll} title="Refresh">
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-          </Button>
         </div>
       </div>
 
@@ -413,8 +410,8 @@ export default function CalendarView() {
                 p-3 rounded-lg border border-border cursor-pointer flex flex-col justify-between transition
                 ${d.iso ? "min-h-[92px]" : "min-h-[92px] opacity-30 pointer-events-none"}
                 ${priority ? priority.bgClass : "bg-card"}
-                ${isToday ? "ring-2 ring-indigo-200" : ""}
-                hover:shadow-md
+                ${isToday ? "ring-2 ring-primary" : ""}
+                hover:shadow-md active:scale-95
               `}
             >
               {/* Top: day number */}
@@ -443,13 +440,13 @@ export default function CalendarView() {
       </div>
 
       {/* bottom legend */}
-      <div className="mt-6 flex flex-wrap gap-3 items-center">
-        <LegendDot color="bg-emerald-500" label="Present" Icon={CheckCircle} />
-        <LegendDot color="bg-rose-500" label="Absent" Icon={XCircle} />
-        <LegendDot color="bg-amber-500" label="Half-day" Icon={Clock} />
-        <LegendDot color="bg-blue-500" label="Leave" Icon={CalendarX} />
-        <LegendDot color="bg-amber-700" label="Holiday" Icon={Star} />
-        <LegendDot color="bg-slate-400" label="Sunday" Icon={Sun} />
+      <div className="mt-6 flex flex-wrap gap-3 items-center justify-center">
+        <LegendDot color="bg-emerald-600" label="Present" Icon={CheckCircle} />
+        <LegendDot color="bg-rose-600" label="Absent" Icon={XCircle} />
+        <LegendDot color="bg-amber-600" label="Half-day" Icon={Clock} />
+        <LegendDot color="bg-blue-600" label="Leave" Icon={CalendarX} />
+        <LegendDot color="bg-amber-600" label="Holiday" Icon={Star} />
+        <LegendDot color="bg-muted-foreground" label="Sunday" Icon={Sun} />
       </div>
 
       {/* day details panel (simple modal) */}
@@ -477,7 +474,7 @@ export default function CalendarView() {
             <div className="space-y-3">
               {/* holiday */}
               {selectedDay.holiday && (
-                <div className="p-3 rounded-lg bg-amber-50 border border-amber-100">
+                <div className="p-3 rounded-lg bg-muted border border-border">
                   <div className="flex items-center gap-2">
                     <Star className="w-5 h-5 text-amber-600" />
                     <div className="font-medium">{selectedDay.holiday.name}</div>
@@ -509,11 +506,11 @@ export default function CalendarView() {
 
               {/* leaves */}
               {selectedDay.leaves && selectedDay.leaves.length > 0 && (
-                <div className="p-3 rounded-lg bg-blue-50 border border-blue-100">
+                <div className="p-3 rounded-lg bg-muted border border-border">
                   <div className="font-medium mb-2">Leave(s)</div>
                   <div className="space-y-2">
                     {selectedDay.leaves.map((L) => (
-                      <div key={L.id} className="bg-white p-2 rounded-lg border">
+                      <div key={L.id} className="bg-card p-2 rounded-lg border border-border">
                         <div className="text-sm font-medium">{L.type} · {L.status}</div>
                         <div className="text-xs text-muted-foreground">
                           {L.fromDate} → {L.toDate}
