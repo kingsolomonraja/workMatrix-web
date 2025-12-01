@@ -185,6 +185,14 @@ const App = () => (
     </ProtectedRoute>
   }
 />
+<Route
+  path="/hr/live-map" 
+  element={
+    <ProtectedRoute>
+      <LiveMapOla />
+    </ProtectedRoute>
+  }
+/>
 
 
             </Routes>
