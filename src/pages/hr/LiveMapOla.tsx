@@ -51,14 +51,14 @@ export default function LiveMapOla() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
-      <header className="p-4 border-b border-zinc-700 flex items-center gap-3">
+    <div className="min-h-screen bg-background">
+      <header className="p-4 border-b border-border flex items-center gap-3">
         <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
           ←
         </Button>
         <h1 className="text-lg font-semibold flex items-center gap-2">
-          <MapPin className="w-5 h-5" />
-          Live Employee Map (Ola)
+          <MapPin className="w-5 h-5 text-blue-600" />
+          Live Employee Map
         </h1>
       </header>
 
