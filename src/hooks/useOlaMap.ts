@@ -24,7 +24,7 @@ export const useOlaMap = (options?: {
         if (!mounted || !mapRef.current) return;
 
         const ola = new OlaMaps({
-          apiKey: import.meta.env.VITE_OLA_API_KEY,
+          apiKey:'FM1n43Y3C0q8GpxiKSjsXHrsTdjP72eQK3CcTubL',
           mode: "3d",
           threedTileset:
             "https://api.olamaps.io/tiles/vector/v1/3dtiles/tileset.json",
