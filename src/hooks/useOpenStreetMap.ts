@@ -4,11 +4,10 @@ import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 type UseOpenStreetMapOptions = {
-  center?: [number, number];      // [lng, lat]
+  center?: [number, number]; // [lng, lat]
   zoom?: number;
-  minZoom?: number;
-  maxZoom?: number;
-  restrictToIndia?: boolean;
+  pitch?: number;
+  bearing?: number;
 };
 
 export const useOpenStreetMap = (options?: UseOpenStreetMapOptions) => {
@@ -19,36 +18,66 @@ export const useOpenStreetMap = (options?: UseOpenStreetMapOptions) => {
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // 👉 Default: South India / Karnataka-ish view
-    const defaultCenter: [number, number] = [77.65, 12.9]; // near Bengaluru
-    const defaultZoom = 7; // shows Karnataka + nearby
-
-    const indiaBounds: maplibregl.LngLatBoundsLike = [
-      [68.0, 6.0],   // SW corner (Gujarat / Indian Ocean)
-      [98.0, 37.0],  // NE corner (NE India)
-    ];
-
     const map = new maplibregl.Map({
       container: mapRef.current,
-      style: "https://tiles.openfreemap.org/styles/liberty", // clean OSM style
-      center: options?.center || defaultCenter,
-      zoom: options?.zoom ?? defaultZoom,
-      minZoom: options?.minZoom ?? 4,   // can't zoom out too far
-      maxZoom: options?.maxZoom ?? 18,  // normal street level
-      maxBounds: options?.restrictToIndia ? indiaBounds : undefined,
+      style: "https://tiles.openfreemap.org/styles/liberty", // OpenFreeMap
+      center: options?.center || [77.5946, 12.9716], // Bengaluru
+      zoom: options?.zoom ?? 11,
+      pitch: options?.pitch ?? 60, // tilt = fake 3D look
+      bearing: options?.bearing ?? -20,
     } as maplibregl.MapOptions);
 
     mapInstanceRef.current = map;
 
-    // Basic controls
+    // zoom / rotate UI
     map.addControl(new maplibregl.NavigationControl(), "top-right");
+
+    map.on("load", () => {
+      // Try adding 3D buildings (if style supports OpenMapTiles)
+      try {
+        const style = map.getStyle();
+        const layers = style.layers || [];
+
+        const labelLayer = layers.find(
+          (l: any) => l.type === "symbol" && l.layout && l.layout["text-field"]
+        );
+        const labelLayerId = labelLayer?.id;
+
+        map.addLayer(
+          {
+            id: "3d-buildings",
+            type: "fill-extrusion",
+            source: "openmaptiles",
+            "source-layer": "building",
+            minzoom: 15,
+            paint: {
+              "fill-extrusion-color": "#cccccc",
+              "fill-extrusion-height": [
+                "coalesce",
+                ["get", "render_height"],
+                ["get", "height"],
+                20,
+              ],
+              "fill-extrusion-base": [
+                "coalesce",
+                ["get", "render_min_height"],
+                ["get", "min_height"],
+                0,
+              ],
+              "fill-extrusion-opacity": 0.9,
+            },
+          } as any,
+          labelLayerId
+        );
+      } catch (err) {
+        console.warn("3D buildings could not be added:", err);
+      }
+    });
 
     return () => {
       map.remove();
     };
-    // we only want to init once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [options?.center, options?.zoom, options?.pitch, options?.bearing]);
 
   const clearMarkers = () => {
     markersRef.current.forEach((m) => m.remove());
@@ -76,8 +105,8 @@ export const useOpenStreetMap = (options?: UseOpenStreetMapOptions) => {
     el.style.height = `${size}px`;
     el.style.borderRadius = "50%";
     el.style.overflow = "hidden";
-    el.style.border = "2px solid white";
-    el.style.boxShadow = "0 2px 6px rgba(0,0,0,0.25)";
+    el.style.border = "3px solid white";
+    el.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)";
     el.style.cursor = "pointer";
 
     const img = document.createElement("img");
@@ -93,29 +122,11 @@ export const useOpenStreetMap = (options?: UseOpenStreetMapOptions) => {
     addMarker(lat, lng, el);
   };
 
-  // Optional helper: fit map to all markers (if you want later)
-  const fitToMarkers = () => {
-    if (!mapInstanceRef.current || markersRef.current.length === 0) return;
-
-    const bounds = new maplibregl.LngLatBounds();
-    markersRef.current.forEach((m) => {
-      const lngLat = m.getLngLat();
-      bounds.extend(lngLat);
-    });
-
-    mapInstanceRef.current.fitBounds(bounds, {
-      padding: 80,
-      maxZoom: 15,
-      duration: 800,
-    });
-  };
-
   return {
     mapRef,
     map: mapInstanceRef,
     addMarker,
     addAvatarMarker,
     clearMarkers,
-    fitToMarkers,
   };
 };
